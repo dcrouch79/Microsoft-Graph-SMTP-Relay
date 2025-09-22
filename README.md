@@ -28,20 +28,25 @@ The `.env.sample` file contains all necessary used configuration keys with parti
 
 ### Azure Active Directory / Entra Registered App
 1. Create a new Registed Application.
-    - The **Application (client) ID** should be the **CLIENT_ID** environmental variable.
-    - The **Directory (tenant) ID** should be appended to `https://login.microsoftonline.com/` to be the **AUTHORITY** environmental variable.
+   - The **Application (client) ID** should be the **CLIENT_ID** environmental variable.
+   - The **Directory (tenant) ID** should be appended to `https://login.microsoftonline.com/` to be the **AUTHORITY** environmental variable.
 2. Go to the **Certificates & secrets** page and create a new secret.
-    - The **Value** for that secret should be the **CLIENT_SECRET** environmental variable.
+   - The **Value** for that secret should be the **CLIENT_SECRET** environmental variable.
 3. Go to the **API permissions** page.
-    - Remove all existing permissions if this registered app will only be used for the SMTP relay.
-    - Click **Add a permission**.
-    - Click **Microsoft Graph**.
-    - Click **Application permissions**.
-    - Search for **mail**.
-    - Select the following checkboxes from "Mail" register:
-        - **Mail.Send** - required for mail submission
-        - **Mail.ReadWrite** - required for mail draft with upload sessions
-    - Click **Add permission**
+   - Remove all existing permissions if this registered app will only be used for the SMTP relay.
+   - Click **Add a permission**.
+   - Click **Microsoft Graph**.
+   - Click **Delegated permissions** (Note: Changed from Application permissions to support ROPC flow).
+   - Search for **mail**.
+   - Select the following checkboxes from "Mail" register:
+     - **Mail.Send** - required for mail submission
+     - **Mail.Send.Shared** - required for mail submission on behalf of other users
+     - **Mail.ReadWrite** - required for mail draft with upload sessions
+     - **Mail.ReadWrite.Shared** - required for mail draft with upload sessions on behalf of other users
+   - Click **Add permission**
+4. **ROPC Authentication Setup**:
+   - Set the **ROPC_USERNAME** environment variable to the email address of the licensed user account that will send emails.
+   - Set the **ROPC_PASSWORD** environment variable to the password associated with **ROPC_USERNAME**.
 
 ## Usage
 

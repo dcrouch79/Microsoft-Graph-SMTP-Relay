@@ -58,7 +58,8 @@ class MicrosoftGraphHandler():
             authority=os.environ["AUTHORITY"],
             token_cache=TokenCache(),
         )
-
+        self.ropc_username = os.environ.get("ROPC_USERNAME", "")
+        self.ropc_password = os.environ.get("ROPC_PASSWORD", "")
         self.access_token = ""
 
     @staticmethod
@@ -140,7 +141,14 @@ class MicrosoftGraphHandler():
         return body_content, content_type, attachments
 
     async def __create_token(self):
-        token_response = self.app.acquire_token_for_client(scopes=[".default"])
+        # Use ROPC (Resource Owner Password Credentials) grant with client_secret
+        if not self.ropc_username or not self.ropc_password:
+            raise Exception("ROPC_USERNAME and ROPC_PASSWORD environment variables must be set for delegated permissions.")
+        token_response = self.app.acquire_token_by_username_password(
+            username=self.ropc_username,
+            password=self.ropc_password,
+            scopes=[".default"]
+        )
         self.access_token = token_response.get("access_token")
 
     async def __create_draft(self, email_message, envelope):
